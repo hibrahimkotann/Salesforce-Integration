@@ -1,0 +1,28 @@
+public class WeatherAPIIntegration {
+    public static void getWeatherData() {
+       String apiUrl = 'http://api.weatherapi.com/v1/current.json?key=ac2fede2d9ac4c1a996200032230606&q=London&aqi=no';
+        Http http = new Http();         
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint(apiUrl);
+        request.setMethod('GET');
+        
+        // HTTP Client oluşturma ve isteği gönderme
+        HttpResponse response = http.send(request);
+        response.getStatusCode();
+        // Yanıtı işleme
+        if (response.getStatusCode() == 200) {
+            // Başarılı yanıt
+            String responseBody = response.getBody();
+            System.debug('Response: ' + responseBody);
+        } else {
+            // Hata durumu
+            String errorMessage = 'Error: ' + response.getStatusCode() + ' - ' + response.getStatus();
+            System.debug(errorMessage);
+        }
+    }
+}
+
+//Bu kod, WeatherAPI'den hava durumu verilerini çekmek ve yanıtları kontrol etmek için temel bir yapı sağlar. Ancak, verileri işlemek, 
+analiz etmek ve Salesforce'a kaydetmek için gerekli kodu içermemektedir.
+Bu nedenle, OpenWeatherAPI'ye benzer şekilde JSON yanıtını analiz edip, hava durumu verilerini almak ve 
+Salesforce'a kaydetmek için ek işlemler yapmanız gerekebilir.
