@@ -1,0 +1,30 @@
+@isTest
+private class ERPIntegrationTest {
+    @isTest
+    static void testGetERPProductInformation() {
+        // MockHttpResponseGenerator sınıfını kullanarak mock HttpCalloutMock sınıfını oluşturun
+        Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenerator());//test sınıfında HTTP çağrısı yapıldığında bu çağrının MockHttpResponseGenerator sınıfı tarafından ele alınacağını belirtir. Bu sayede, gerçek bir HTTP çağrısı yapmadan, test senaryosunda tanımladığınız yanıtı döndürebilirsiniz.
+
+        Test.startTest();
+
+        // ERPIntegration sınıfının getERPProductInformation() metodunu çağırın
+            ERPIntegration.getERPProductInformation();
+
+        Test.stopTest();
+      
+        // Salesforce'da oluşturulan ürünleri sorgula ve doğrula
+       List<Product2> products = [SELECT Name, ProductCode, productERPId__c, wheelDrive__c, gear__c, bodyType__c, engineCapacity__c, fuelType__c, unitPrice__c, isActive__c, Description FROM Product2];
+        //System.assertEquals(1, products.size());
+        Product2 product = products[0];
+        System.assertEquals('Test Product1', product.Name);
+        System.assertEquals('112233', product.ProductCode);
+        System.assertEquals('01t78000000eME6AAM', product.productERPId__c);
+        System.assertEquals('Manual', product.gear__c);
+        System.assertEquals('Sedan', product.bodyType__c);
+        System.assertEquals('1000 to 1500', product.engineCapacity__c);
+        System.assertEquals('Diesel', product.fuelType__c);
+        System.assertEquals(100.00, product.unitPrice__c);
+        System.assertEquals(true, product.isActive__c);
+        System.assertEquals('TESTTT', product.Description); 
+    }
+}
