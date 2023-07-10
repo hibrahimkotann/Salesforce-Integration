@@ -1,0 +1,12 @@
+@isTest
+public class MockHttpResponseGenerator implements HttpCalloutMock {
+        public HttpResponse respond(HttpRequest request) {
+            
+            // Fake bir Yanıt oluşturun
+            HttpResponse response = new HttpResponse();
+            response.setHeader('Content-Type', 'application/json');
+            response.setBody('{"prodList": [{ "bodyType": "Sedan", "description": "TESTTT", "engineCapacity": "1000 to 1500", "fuelType": "Diesel", "gear": "Manual", "isActive": true, "productCode": "112233", "productERPId": "01t78000000eME6AAM", "productName": "Test Product1", "unitPrice": 100.00 }]}');
+            response.setStatusCode(200);
+            return response;
+        }
+    }
