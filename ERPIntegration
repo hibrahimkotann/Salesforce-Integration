@@ -1,0 +1,63 @@
+public class ERPIntegration {
+    public static void getERPProductInformation() {
+        // ERP sistemi API endpoint'i
+        String endpoint = 'https://wisequarter1--erp.sandbox.my.salesforce.com/services/apexrest/ProductWebService';
+
+      
+        Http http = new Http();
+         HttpRequest request = new HttpRequest();
+          request.setMethod('GET');
+           request.setEndpoint(endpoint);
+            request.setHeader( 'Content-Type', 'application/json' );    
+             request.setHeader( 'Authorization', 'Bearer 00D780000008gDM!AQcAQDbdbzqIZGm6CPln_q7eHEci7VM2hE64xQGc4OnkFPxcuZydFhpar8RbT9HG_11POGlPDOXnptcmdptTmy2aY_g6HoaZ');        
+               
+                      
+        HttpResponse response = http.send(request);
+        System.debug( 'response.getBody()' + response.getBody());
+        
+         if( response.getStatusCode() == 200 ){
+      
+            String jsonBody = response.getBody(); 
+            Map<String,Object> results = (Map<String,Object>) JSON.deserializeUntyped(jsonBody);
+        
+         List<Object> ProductList = (List<Object>)results.get('prodList');
+           System.debug( 'ProductList' + (List<Object>)results.get('prodList'));  
+             
+             /*USER_DEBUG [26]|DEBUG|ProductList({bodyType=Sedan, description=TESTTT, engineCapacity=1000 to 1500, 
+                 fuelType=Diesel, gear=Manual, isActive=true, productCode=112233, productERPId=01t78000000eME6AAM, 
+                 productName=Test Product1, unitPrice=100.00, ...} */
+                                            
+               
+         List<Product2> productsToInsert = new List<Product2>();
+           for (Object obj : ProductList) {
+               Map<String, Object> productData = (Map<String, Object>) obj;
+                Product2 product = new Product2();
+                    product.Name = (String) productData.get('productName');
+                     product.ProductCode = (String) productData.get('productCode');
+                      product.productERPId__c  = (String) productData.get('productERPId');
+                       product.wheelDrive__c =(String) productData.get('wheelDrive');
+                        product.gear__c = (String) productData.get('gear');
+                         product.bodyType__c = (String) productData.get('bodyType');
+                        product.engineCapacity__c = (String) productData.get('engineCapacity');
+                       product.fuelType__c = (String) productData.get('fuelType');
+                      product.unitPrice__c = (Decimal) productData.get('unitPrice');
+                     product.isActive__c = (Boolean) productData.get('isActive');                                                  
+                    product.Description = (String) productData.get('description');
+                
+             
+                       productsToInsert.add(product);
+            }
+
+            if (!productsToInsert.isEmpty()) {
+                insert productsToInsert;
+                System.debug('Ürünler Salesforce\'a başarıyla eklendi.');
+            } else {
+                System.debug('ERP sistemi tarafından dönen ürün bilgisi bulunamadı.');
+            }
+        } else {
+            System.debug('ERP sistemiyle iletişimde bir hata oluştu. Hata kodu: ' + response.getStatusCode());
+        }
+    }
+        
+        
+         }
